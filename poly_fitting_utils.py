@@ -1,9 +1,8 @@
 from functools import partial
 import numpy as np
 import matplotlib.pyplot as plt
-from test import plot_xy
+from plot_utils import plot_xy
 from scipy.optimize import curve_fit
-
 
 def fit_thrust_current(data):
     """
@@ -12,7 +11,7 @@ def fit_thrust_current(data):
     """
     data = np.array(data)
     I = data[:,0]
-    T = data[:,1]
+    T = data[:,1]   
 
     # Linear regression: T = m*I + b
     A = np.vstack([I, np.ones(len(I))]).T
@@ -178,38 +177,6 @@ def plot_thrust_fit_thrust_per_current(data, K, a):
     plt.tight_layout()
     plt.show()
 
-def fit_to_cubic(data):
-
-
-    # Separate into x and y
-    x = np.array([d[0] for d in data_t_to_e_2])
-    y = np.array([d[1] for d in data_t_to_e_2])
-
-    # Fit a cubic polynomial (degree = 3)
-    coeffs = np.polyfit(x, y, 3)
-
-    # Create a polynomial function from coefficients
-    poly = np.poly1d(coeffs)
-
-    # Generate smooth curve for plotting
-    x_fit = np.linspace(min(x), max(x), 200)
-    y_fit = poly(x_fit)
-
-    # Print the equation
-    print("Cubic fit equation:")
-    print(f"y = {coeffs[0]:.6f}x³ + {coeffs[1]:.6f}x² + {coeffs[2]:.6f}x + {coeffs[3]:.6f}")
-
-    # Plot data and fitted curve
-    plt.scatter(x, y, color='red', label='Data points')
-    plt.plot(x_fit, y_fit, color='blue', label='Cubic fit')
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.legend()
-    plt.title('Cubic Fit to Data')
-    plt.grid(True)
-    plt.show()
-    return coeffs
-
 
 def fit_to_parabola(data):
 
@@ -300,10 +267,10 @@ def fit_concave_parabola(data, title='Downward-opening Parabolic Fit'):
 
 def fit_to_lin(data):
     # Separate into x and y
-    x = np.array([d[0] for d in data_t_to_e_2])
-    y = np.array([d[1] for d in data_t_to_e_2])
+    x = np.array([d[0] for d in data])
+    y = np.array([d[1] for d in data])
 
-    # Fit a cubic polynomial (degree = 2)
+    # Fit a cubic polynomial (degree = 1)
     coeffs = np.polyfit(x, y, 1)
 
     # Create a polynomial function from coefficients
@@ -314,160 +281,159 @@ def fit_to_lin(data):
     y_fit = poly(x_fit)
 
     # Print the equation
-    print("parabolic fit equation:")
+    print("linear fit equation:")
     print(f"y = {coeffs[0]:.6f}x + {coeffs[1]:.6f}")
 
     # Plot data and fitted curve
     plt.scatter(x, y, color='red', label='Data points')
-    plt.plot(x_fit, y_fit, color='blue', label='parabola fit')
-    plt.xlabel('x')
-    plt.ylabel('y')
+    plt.plot(x_fit, y_fit, color='blue', label='fitted line')
+    plt.xlabel('thrust (g)')
+    plt.ylabel('efficiency (g/watt)')
     plt.legend()
-    plt.title('parabolic Fit to Data')
+    plt.title('Linear Fit to Data')
     plt.grid(True)
     plt.show()
     return coeffs
 
-
-# Example dataset
-data1 = [
-    [0.52, 5.1],
-    [1.00, 8.9],
-    [1.53, 13.1],
-    [1.99, 16.3],
-    [2.50, 19.3],
-    [2.86, 21.7]
-]
-
-
-
-data2 = [[1, 8.1],[1.5, 11.8],[2,15.6],[2.5,19.6],[3,22.4],[3.5, 25.6],[4, 27.1]]
-
-# === 0802SE 19500KV ===
-
-# GF31mm -3B 1219
-data_GF31_19500 = [
-    [0.5, 2.8],
-    [1.0, 7.2],
-    [1.5, 11.6],
-    [2.0, 16.0],
-    [2.5, 20.7],
-    [3.0, 24.2],
-    [3.1, 24.6]
-]
-
-# GF35mm -3B
-data_GF35_19500 = [
-    [0.5, 4.1],
-    [1.0, 8.8],
-    [1.5, 14.0],
-    [2.0, 18.5],
-    [2.5, 23.0],
-    [3.0, 26.3],
-    [3.4, 30.6]
-
-]
-
-# GF40mm -2B 1610
-data_GF40_19500 = [
-    [0.5,4.4],
-    [1.0, 9.4],
-    [1.5, 14.5],
-    [2.0, 20.0],
-    [2.5, 25.3],
-    [3.0, 29.0],
-    [3.5, 32.5],
-    [3.7, 33.5]
-]
-
-# === 0802SE 23000KV ===
-
-# GF31mm -3B 1219
-data_GF31_23000 = [
-    [0.5, 3.0],
-    [1.0, 7.2],
-    [1.5, 11.3],
-    [2.0, 17.2],
-    [2.5, 21.8],
-    [3.0, 25.4],
-    [3.3, 27.4]
-]
-
-# GF35mm -3B    from scipy.optimize import minimize
-
-data_GF35_23000 = [
-    [0.5, 3.9],
-    [1.0, 8.6],
-    [1.5, 12.9],
-    [2.0, 18.4],
-    [2.5, 24.2],
-    [3.0, 27.3],
-    [3.5, 30.6],
-    [3.7, 32.6]
-]
-
-# GF40mm -2B 1610
-data_GF40_23000 = [
-    [0.5, 4.8],
-    [1.0, 9.9],
-    [1.5, 14.2],
-    [2.0, 18.8],
-    [2.5, 23.4],
-    [3.0, 28.5],
-    [3.5, 32.3],
-    [4.0, 35.3]
-]
+if __name__ == "__main__":
+    # Example dataset
+    data1 = [
+        [0.52, 5.1],
+        [1.00, 8.9],
+        [1.53, 13.1],
+        [1.99, 16.3],
+        [2.50, 19.3],
+        [2.86, 21.7]
+    ]
 
 
-data3 = [[0.5, 3.24],[1.0,6.57],[1.5,8.922],[2.0, 11.13],[2.5, 13.03],[3, 15.87],[3.5, 18.89],[4, 23.36],[4.5, 26.49],[5, 29.8],[5.5, 32.59],[6, 36.13],[6.5, 37.24],[7,40.02],[7.5, 41.23], [7.8, 44.02]]
 
-data4 = [[0.5,3.655],[1,7.004],[1.5,10.71],[2,14.07]]
+    data2 = [[1, 8.1],[1.5, 11.8],[2,15.6],[2.5,19.6],[3,22.4],[3.5, 25.6],[4, 27.1]]
 
-data5 = [[0.5,4.57],[1,8.755],[1.5, 13.39],[2,17.6],]
+    # === 0802SE 19500KV ===
 
-data6 = [[1.05, 11.9],[2.08, 20.5],[3.05, 27.1],[4.11, 32.3], [4.25, 33.9]]
-data7=[[0.5, 4.4],[1,9.4],[1.5,14.5],[2,20],[2.5,25.3],[3,29],[3.5,32.5],[3.7,33.5]]
+    # GF31mm -3B 1219
+    data_GF31_19500 = [
+        [0.5, 2.8],
+        [1.0, 7.2],
+        [1.5, 11.6],
+        [2.0, 16.0],
+        [2.5, 20.7],
+        [3.0, 24.2],
+        [3.1, 24.6]
+    ]
 
-# Print one example to verify
-datas = [data1, data2, data_GF31_19500, data_GF35_19500, data_GF40_19500,
-         data_GF31_23000, data_GF35_23000, data_GF40_23000]
+    # GF35mm -3B
+    data_GF35_19500 = [
+        [0.5, 4.1],
+        [1.0, 8.8],
+        [1.5, 14.0],
+        [2.0, 18.5],
+        [2.5, 23.0],
+        [3.0, 26.3],
+        [3.4, 30.6]
 
-# for data in datas:
-#     K, a = fit_thrust_current_linear(data), 0
-#     print(f"Best fit: K = {K:.3f}, a = {a:.3f}")
-#     plot_thrust_fit_with_percentage_error(data, K, a)
-#     plot_thrust_fit_thrust_per_current(data, K, a)
+    ]
 
-data_t_to_e_1 = [[11.9,2.982],[20.5, 2.594],[27.1, 2.338],[32.3, 2.068],[33.9, 2.156],]
-data_t_to_e_2 = [[7.6, 2.866],[13.2,2.551],[18.9,2.431,],[23.4, 2.261],[25.2,2.14],]
-data_t_to_e_3 = [[5.1,3.55],[10.3, 3.58],[13.8, 3.3,],[17.9, 3.24],[22.7, 3.27, ],[27.7, 3.31],[32,3.29],[35.7,3.23],[39, 3.17],[40.6, 3.11],]
-data_t_to_e_4 = [[23,2.905],[40.9, 2.607],[56.6, 2.413],[68.6, 2.289],[81.8,2.193],[95,2.074],[106.5,1.991],[115.3,1.884],[121.9, 1.791],] # happymodel ex1103 https://www.happymodel.cn/index.php/2022/09/05/bassline-spare-part-ex1103-kv11000-brushless-motor/
-data=data7
+    # GF40mm -2B 1610
+    data_GF40_19500 = [
+        [0.5,4.4],
+        [1.0, 9.4],
+        [1.5, 14.5],
+        [2.0, 20.0],
+        [2.5, 25.3],
+        [3.0, 29.0],
+        [3.5, 32.5],
+        [3.7, 33.5]
+    ]
 
-data_cubic = data_t_to_e_4
+    # === 0802SE 23000KV ===
 
-cubic = fit_concave_parabola(data_cubic)
-cubic_func = lambda x: cubic[0]*x**3 + cubic[1]*x**2 + cubic[2]*x + cubic[3]
-parabolic_func = lambda x: cubic[0]*x**2 + cubic[1]*x + cubic[2]
-lin_func = lambda x: cubic[0]*x + cubic[1]
+    # GF31mm -3B 1219
+    data_GF31_23000 = [
+        [0.5, 3.0],
+        [1.0, 7.2],
+        [1.5, 11.3],
+        [2.0, 17.2],
+        [2.5, 21.8],
+        [3.0, 25.4],
+        [3.3, 27.4]
+    ]
 
-def time_func(x):
-    return 0.2 * x * parabolic_func((15+x)/4) / (15 + x) 
+    # GF35mm -3B    from scipy.optimize import minimize
 
-def battery_thrust_func(watt_per_gram, x): # Don't have to multiply 4, even with 4 motors.
-    return watt_per_gram * x * parabolic_func((15+x)/4) 
+    data_GF35_23000 = [
+        [0.5, 3.9],
+        [1.0, 8.6],
+        [1.5, 12.9],
+        [2.0, 18.4],
+        [2.5, 24.2],
+        [3.0, 27.3],
+        [3.5, 30.6],
+        [3.7, 32.6]
+    ]
 
-def weight_func(x):
-    return (15+x)
+    # GF40mm -2B 1610
+    data_GF40_23000 = [
+        [0.5, 4.8],
+        [1.0, 9.9],
+        [1.5, 14.2],
+        [2.0, 18.8],
+        [2.5, 23.4],
+        [3.0, 28.5],
+        [3.5, 32.3],
+        [4.0, 35.3]
+    ]
 
-def parabolic(x):
-    return parabolic_func((15+x)/4)
 
-plot_xy([time_func], x_min=0, x_max=400)
+    data3 = [[0.5, 3.24],[1.0,6.57],[1.5,8.922],[2.0, 11.13],[2.5, 13.03],[3, 15.87],[3.5, 18.89],[4, 23.36],[4.5, 26.49],[5, 29.8],[5.5, 32.59],[6, 36.13],[6.5, 37.24],[7,40.02],[7.5, 41.23], [7.8, 44.02]]
 
-for i in np.arange(0.5, 1, 0.05):
-    print(f'=== Watt per gram: {i} ===')
-    plot_xy([partial(battery_thrust_func, i), weight_func], x_min=0, x_max=400)
+    data4 = [[0.5,3.655],[1,7.004],[1.5,10.71],[2,14.07]]
 
-    print('---------------------------------------------------------------------------------')
-# plot_xy([parabolic], x_min=0, x_max=200, title='Thrust per motor vs Battery Current', ylabel='Thrust per motor (g)')
+    data5 = [[0.5,4.57],[1,8.755],[1.5, 13.39],[2,17.6],]
+
+    data6 = [[1.05, 11.9],[2.08, 20.5],[3.05, 27.1],[4.11, 32.3], [4.25, 33.9]]
+    data7=[[0.5, 4.4],[1,9.4],[1.5,14.5],[2,20],[2.5,25.3],[3,29],[3.5,32.5],[3.7,33.5]]
+
+    # Print one example to verify
+    datas = [data1, data2, data_GF31_19500, data_GF35_19500, data_GF40_19500,
+            data_GF31_23000, data_GF35_23000, data_GF40_23000]
+
+    data=data7 
+
+    # data for thrust-thrust/watt curve(or line) fitting to estimate runtime eventually
+    # y value is efficiency = g/watt
+    data_t_to_e_1 = [[11.9,2.982],[20.5, 2.594],[27.1, 2.338],[32.3, 2.068],[33.9, 2.156],]
+    data_t_to_e_2 = [[7.6, 2.866],[13.2,2.551],[18.9,2.431,],[23.4, 2.261],[25.2,2.14],]
+    data_t_to_e_3 = [[5.1,3.55],[10.3, 3.58],[13.8, 3.3,],[17.9, 3.24],[22.7, 3.27, ],[27.7, 3.31],[32,3.29],[35.7,3.23],[39, 3.17],[40.6, 3.11],]
+    data_t_to_e_4 = [[23,2.905],[40.9, 2.607],[56.6, 2.413],[68.6, 2.289],[81.8,2.193],[95,2.074],[106.5,1.991],[115.3,1.884],[121.9, 1.791],] # happymodel ex1103 https://www.happymodel.cn/index.php/2022/09/05/bassline-spare-part-ex1103-kv11000-brushless-motor/
+    data_t_to_e_5 = [[12.9, 3.452],[23.3, 3.133],[32.1, 2.892],[40.8, 2.757],[48.9, 2.643],[55.4, 2.5],] # https://www.happymodel.cn/index.php/2022/09/14/happymodel-ex1002-kv20000-new-series-brushless-motor-for-mobula7-1s/
+    data_t_to_e_6  = [[23, 2.905],[40.9, 2.607],[56.6, 2.413],[68.6,2.289],[81.8, 2.193],[95, 2.074],[106.5,1.991],[115.3, 1.884],[121.9, 1.791]] # EX1103 Happymodel https://www.happymodel.cn/index.php/2022/09/05/bassline-spare-part-ex1103-kv11000-brushless-motor/
+
+    # t_to_e_5 is the best so far.
+    data_for_runtime_est = data_t_to_e_5
+
+    para = fit_concave_parabola(data_for_runtime_est)
+    parabolic_func = lambda x: para[0]*x**2 + para[1]*x + para[2]
+    linear = fit_to_lin(data_for_runtime_est)
+    lin_func = lambda x: linear[0]*x + linear[1]
+    parabolic_func = lin_func
+
+    def time_func(x):
+        return 0.2 * x * parabolic_func((20+x)/4) / (20 + x) 
+        
+    def battery_thrust_func(watt_per_gram, x): # Don't have to multiply 4, even with 4 motors.
+        return watt_per_gram * x * parabolic_func((20+x)/4) 
+
+    def weight_func(x):
+        return (20+x)
+
+    def parabolic(x):
+        return parabolic_func((20+x)/4)
+
+    opt_x, opt_y = plot_xy([time_func], x_min=0, x_max=400, mark_x=55)
+
+    for i in np.arange(0.5, 1, 0.05):
+        print(f'=== Watt per gram: {i} ===') 
+        plot_xy([partial(battery_thrust_func, i), weight_func], x_min=0, x_max=400, mark_x=55)
+        print('---------------------------------------------------------------------------------')
